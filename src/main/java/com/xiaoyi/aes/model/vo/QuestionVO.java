@@ -104,9 +104,9 @@ public class QuestionVO implements Serializable {
         if (tagList != null) {
             question.setTags(JSONUtil.toJsonStr(tagList));
         }
-        JudgeConfig judgeConfig = questionVO.getJudgeConfig();
-        if (judgeConfig != null) {
-            question.setJudgeConfig(JSONUtil.toJsonStr(judgeConfig));
+        JudgeConfig voJudgeConfig = questionVO.getJudgeConfig();
+        if (voJudgeConfig != null) {
+            question.setJudgeConfig(JSONUtil.toJsonStr(voJudgeConfig));
         }
         return question;
     }
@@ -125,7 +125,7 @@ public class QuestionVO implements Serializable {
         BeanUtils.copyProperties(question, questionVO);
         List<String> tagList = JSONUtil.toList(question.getTags(), String.class);
         questionVO.setTags(tagList);
-        String judgeConfigStr= question.getJudgeConfig();
+        String judgeConfigStr = question.getJudgeConfig();
         questionVO.setJudgeConfig(JSONUtil.toBean(judgeConfigStr, JudgeConfig.class));
         return questionVO;
     }

@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.xiaoyi.aes.model.dto.question.JudgeCase;
+import com.xiaoyi.aes.model.dto.question.JudgeConfig;
 import lombok.Data;
 
 /**
@@ -16,7 +19,7 @@ public class Question implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**

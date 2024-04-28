@@ -2,6 +2,7 @@ package com.xiaoyi.aes.controller;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
 import com.xiaoyi.aes.annotation.AuthCheck;
 import com.xiaoyi.aes.common.BaseResponse;
 import com.xiaoyi.aes.common.DeleteRequest;
@@ -10,10 +11,7 @@ import com.xiaoyi.aes.common.ResultUtils;
 import com.xiaoyi.aes.constant.UserConstant;
 import com.xiaoyi.aes.exception.BusinessException;
 import com.xiaoyi.aes.exception.ThrowUtils;
-import com.xiaoyi.aes.model.dto.question.QuestionAddRequest;
-import com.xiaoyi.aes.model.dto.question.QuestionEditRequest;
-import com.xiaoyi.aes.model.dto.question.QuestionQueryRequest;
-import com.xiaoyi.aes.model.dto.question.QuestionUpdateRequest;
+import com.xiaoyi.aes.model.dto.question.*;
 import com.xiaoyi.aes.model.entity.Question;
 import com.xiaoyi.aes.model.entity.User;
 import com.xiaoyi.aes.model.vo.QuestionVO;
@@ -41,6 +39,7 @@ public class QuestionController {
     @Resource
     private UserService userService;
 
+    private final static Gson GSON = new Gson();
     // region 增删改查
 
     /**
@@ -59,7 +58,15 @@ public class QuestionController {
         BeanUtils.copyProperties(questionAddRequest, question);
         List<String> tags = questionAddRequest.getTags();
         if (tags != null) {
-            question.setTags(JSONUtil.toJsonStr(tags));
+            question.setTags(GSON.toJson(tags));
+        }
+        List<JudgeCase> judgeCase = questionAddRequest.getJudgeCase();
+        if (judgeCase != null) {
+            question.setJudgeCase(GSON.toJson(judgeCase));
+        }
+        JudgeConfig judgeConfig = questionAddRequest.getJudgeConfig();
+        if (judgeConfig != null) {
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
         }
         questionService.validQuestion(question, true);
         User loginUser = userService.getLoginUser(request);
@@ -113,7 +120,15 @@ public class QuestionController {
         BeanUtils.copyProperties(questionUpdateRequest, question);
         List<String> tags = questionUpdateRequest.getTags();
         if (tags != null) {
-            question.setTags(JSONUtil.toJsonStr(tags));
+            question.setTags(GSON.toJson(tags));
+        }
+        List<JudgeCase> judgeCase = questionUpdateRequest.getJudgeCase();
+        if (judgeCase != null) {
+            question.setJudgeCase(GSON.toJson(judgeCase));
+        }
+        JudgeConfig judgeConfig = questionUpdateRequest.getJudgeConfig();
+        if (judgeConfig != null) {
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
         }
         // 参数校验
         questionService.validQuestion(question, false);
@@ -131,6 +146,29 @@ public class QuestionController {
      * @param id
      * @return
      */
+    @GetMapping("/get")
+    public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Question question = questionService.getById(id);
+        if (question == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        // 不是本人或管理员，不能直接获取所有信息
+        if (!question.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        return ResultUtils.success(question);
+    }
+
+    /**
+     * 根据 id 获取（脱敏）
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/get/vo")
     public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
         if (id <= 0) {
@@ -144,7 +182,7 @@ public class QuestionController {
     }
 
     /**
-     * 分页获取列表（仅管理员）
+     * 分页获取题目列表（仅管理员）
      *
      * @param questionQueryRequest
      * @return
@@ -220,7 +258,15 @@ public class QuestionController {
         BeanUtils.copyProperties(questionEditRequest, question);
         List<String> tags = questionEditRequest.getTags();
         if (tags != null) {
-            question.setTags(JSONUtil.toJsonStr(tags));
+            question.setTags(GSON.toJson(tags));
+        }
+        List<JudgeCase> judgeCase = questionEditRequest.getJudgeCase();
+        if (judgeCase != null) {
+            question.setJudgeCase(GSON.toJson(judgeCase));
+        }
+        JudgeConfig judgeConfig = questionEditRequest.getJudgeConfig();
+        if (judgeConfig != null) {
+            question.setJudgeConfig(GSON.toJson(judgeConfig));
         }
         // 参数校验
         questionService.validQuestion(question, false);

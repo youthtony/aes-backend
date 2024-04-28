@@ -44,7 +44,7 @@ public class QuestionAddRequest implements Serializable {
     /**
      * 判题配置(json 对象)
      */
-    private List<JudgeConfig> judgeConfig;
+    private JudgeConfig judgeConfig;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
