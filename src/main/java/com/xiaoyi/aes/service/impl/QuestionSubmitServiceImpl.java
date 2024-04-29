@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xiaoyi.aes.common.ErrorCode;
 import com.xiaoyi.aes.constant.CommonConstant;
 import com.xiaoyi.aes.exception.BusinessException;
+import com.xiaoyi.aes.judge.JudgeService;
 import com.xiaoyi.aes.mapper.QuestionSubmitMapper;
 import com.xiaoyi.aes.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.xiaoyi.aes.model.dto.questionsubmit.QuestionSubmitQueryRequest;
@@ -45,6 +46,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     private UserService userService;
 
+    @Resource
+    @Lazy
+    private JudgeService judgeService;
     /**
      * 提交题目 进行校验
      *
@@ -81,7 +85,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (!save){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"提交失败");
         }
-        return questionSubmit.getId();
+        Long questionSubmitId = questionSubmit.getId();
+//        todo 执行判题服务
+        CompletableFuture.runAsync(()->{
+            judgeService.doJudge(questionSubmitId);
+        });
+        return questionSubmitId;
     }
     /**
      * 获取查询包装类（用户根据哪些字段查询，根据前端传来的请求对象，得到 mybatis 框架支持的查询 QueryWrapper 类）
