@@ -26,6 +26,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -57,6 +58,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
      * @return 提交记录的ID
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
 //        检验编程是否合法
         String language=questionSubmitAddRequest.getLanguage();
@@ -85,12 +87,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (!save){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"提交失败");
         }
-        Long questionSubmitId = questionSubmit.getId();
-//        todo 执行判题服务
-        CompletableFuture.runAsync(()->{
-            judgeService.doJudge(questionSubmitId);
-        });
-        return questionSubmitId;
+//         执行判题服务
+        CompletableFuture.runAsync(() -> judgeService.doJudge(questionSubmit));
+        return questionSubmit.getId();
     }
     /**
      * 获取查询包装类（用户根据哪些字段查询，根据前端传来的请求对象，得到 mybatis 框架支持的查询 QueryWrapper 类）
@@ -116,7 +115,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
         queryWrapper.eq(ObjectUtils.isNotEmpty(questionId), "questionId", questionId);
         queryWrapper.eq(QuestionSubmitStatusEnum.getEnumByValue(status) != null, "status", status);
-        queryWrapper.eq("isDelete", false);
+        queryWrapper.eq("isDelete", 0);
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;

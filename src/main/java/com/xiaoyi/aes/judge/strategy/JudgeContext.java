@@ -4,6 +4,7 @@ import com.xiaoyi.aes.model.dto.question.JudgeCase;
 import com.xiaoyi.aes.model.dto.questionsubmit.JudgeInfo;
 import com.xiaoyi.aes.model.entity.Question;
 import com.xiaoyi.aes.model.entity.QuestionSubmit;
+import com.xiaoyi.aes.model.enums.QuestionSubmitLanguageEnum;
 import lombok.Data;
 
 import java.util.List;
@@ -16,14 +17,13 @@ public class JudgeContext {
 
     private JudgeInfo judgeInfo;
 
-    private List<String> inputList;
-
     private List<String> outputList;
 
-    private List<JudgeCase> judgeCaseList;
+    private List<String> outputListResult;
 
     private Question question;
 
-    private QuestionSubmit questionSubmit;
+    private QuestionSubmitLanguageEnum languageType;
+
 
 }

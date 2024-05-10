@@ -14,12 +14,16 @@ import com.xiaoyi.aes.model.entity.User;
 import com.xiaoyi.aes.model.enums.UserRoleEnum;
 import com.xiaoyi.aes.model.vo.LoginUserVO;
 import com.xiaoyi.aes.model.vo.UserVO;
+import com.xiaoyi.aes.service.FileService;
 import com.xiaoyi.aes.service.UserService;
 import com.xiaoyi.aes.utils.SqlUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +38,9 @@ import org.springframework.util.DigestUtils;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
+
+    @Resource
+    private FileService fileService;
     /**
      * 盐值，混淆密码
      */
@@ -158,6 +165,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (currentUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
+        setUserTempAccessAvatar(currentUser);//获取登录用户图片链接
         return currentUser;
     }
 
@@ -221,6 +229,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtils.copyProperties(user, loginUserVO);
+//        loginUserVO.setUserRole(loginUserVO.getUserRole());
         return loginUserVO;
     }
 
@@ -265,5 +274,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    /**
+     * 设置用户头像的临时访问地址
+     */
+    private void setUserTempAccessAvatar(User currentUser) {
+        String userAvatar = currentUser.getUserAvatar();
+        if (StringUtils.isNotBlank(userAvatar)) {
+            System.out.println("设置用户头像的临时访问地址" + fileService.getTmpAccess(userAvatar));
+            currentUser.setUserAvatar(fileService.getTmpAccess(userAvatar));
+        }
     }
 }

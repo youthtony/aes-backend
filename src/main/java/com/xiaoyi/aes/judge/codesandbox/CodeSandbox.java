@@ -1,8 +1,8 @@
 package com.xiaoyi.aes.judge.codesandbox;
 
 
-import com.xiaoyi.aes.judge.codesandbox.model.ExecuteCodeRequest;
-import com.xiaoyi.aes.judge.codesandbox.model.ExecuteCodeResponse;
+import com.xiaoyi.aes.judge.model.ExecuteCodeRequest;
+import com.xiaoyi.aes.judge.model.ExecuteCodeResponse;
 
 /**
  * 代码沙箱接口

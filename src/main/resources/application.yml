@@ -91,7 +91,14 @@ cos:
     bucket: xxx
 #代码沙箱配置
 codesandbox:
-  type: example
+  type: remote
+#阿里云配置改为自己的值
+aliyun:
+  oss:
+    access-key: xxx
+    key-secret: xxx
+    bucket-name: xxx
+    endpoint: xxx
 # 接口文档配置
 knife4j:
   enable: true

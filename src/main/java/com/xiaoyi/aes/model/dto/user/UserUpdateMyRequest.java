@@ -1,7 +1,10 @@
 package com.xiaoyi.aes.model.dto.user;
 
 import java.io.Serializable;
+
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 用户更新个人信息请求
@@ -12,6 +15,7 @@ public class UserUpdateMyRequest implements Serializable {
     /**
      * 用户昵称
      */
+    @NotBlank(message = "昵称不能为空")
     private String userName;
 
     /**

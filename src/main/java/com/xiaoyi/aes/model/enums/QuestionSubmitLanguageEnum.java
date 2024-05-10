@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *  @Description 问题提交语言枚举
+ * @Description 问题提交语言枚举
  */
 public enum QuestionSubmitLanguageEnum {
 
     JAVA("java", "java"),
 
-    CPLUSPLUS("cpp", "cpp"),
+    CPP("cpp", "cpp"),
 
-    GOLANG("go", "go");
+    PYTHON("python", "python");
 
     private final String text;
 

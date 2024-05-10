@@ -8,8 +8,8 @@ import com.xiaoyi.aes.model.entity.QuestionSubmit;
 public interface JudgeService {
     /**
      * 判题
-     * @param questionSubmitId
+     * @param questionSubmit
      * @return
      */
-    QuestionSubmit doJudge(long questionSubmitId);
+    QuestionSubmit doJudge(QuestionSubmit questionSubmit);
 }
